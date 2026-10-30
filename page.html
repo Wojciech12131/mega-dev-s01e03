@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>#4471 · three problems, not one · support kb</title>
+<style>
+:root { --bg: #fbfaf7; --fg: #1d1d1b; --muted: #6b6a66; --line: #e3e0d8; --accent: #2f6f5e; --warn: #b4501f; --warn-bg: #fbeee6; --note-bg: #eef5f2; --mono: ui-monospace, 'Cascadia Code', Menlo, monospace; }
+@media (prefers-color-scheme: dark) { :root { --bg: #171716; --fg: #ecebe6; --muted: #9c9a93; --line: #34332f; --accent: #6fbfa6; --warn: #f0905d; --warn-bg: #3a2418; --note-bg: #1d2c27; } }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, sans-serif; }
+.kb table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.92rem; }
+.kb th, .kb td { border-bottom: 1px solid var(--line); padding: 0.35rem 0.5rem; text-align: left; }
+.kb code { font-family: var(--mono); font-size: 0.88em; }
+.kb a { color: var(--accent); }
+.kb { max-width: 760px; margin: 0 auto; padding: 2rem 16px 4rem; }
+.crumb { font: 0.8rem var(--mono); text-decoration: none; color: var(--muted); }
+h1 { margin: 0.25rem 0 0.5rem; line-height: 1.2; }
+.meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; color: var(--muted); font-size: 0.85rem; margin: 0; }
+.status { border: 1px solid var(--line); border-radius: 99px; padding: 0 0.6rem; }
+footer { margin-top: 3rem; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+aside { border-left: 4px solid var(--accent); padding: 0.5rem 1rem; margin: 1rem 0; background: var(--note-bg); }
+aside.warn { border-color: var(--warn); background: var(--warn-bg); }
+.sum { font-size: 1.1rem; }
+.tags { color: var(--muted); font-size: 0.85em; }
+.stamp { margin: 2rem 0 0; font: 0.85rem var(--mono); color: var(--muted); }
+.stamp b { color: var(--accent); letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+<div class="kb">
+  <header>
+    <a class="crumb" href="/kb">support desk · kb</a>
+    <h1>#4471 · three problems, not one</h1>
+    <p class="meta">
+      <span>owner <b>Wojtek</b></span>
+      <span class="status open">open</span>
+      <span>reviewed 2026-10-30 · 0 days ago</span>
+    </p>
+  </header>
+  <main>
+<p>The <a href="/kb/incidents/4471">#4471 page</a> says one issue and one fix. The reports say otherwise. We read
+every unique report in the export (the export pages overlap, so a report can arrive twice) and sorted
+each one by its cause, using the tenant's locale and booking form, never the subject line.</p>
+
+<aside class="warn">
+#4471 holds three problems. The queued fix covers the first one only.
+</aside>
+
+<h2>What is inside</h2>
+
+<p class="sum"><strong>412</strong> reports merged into #4471 · <strong>3</strong> problems</p>
+<table>
+  <thead>
+    <tr><th>problem</th><th>reports</th><th>tagged as</th><th>tenants</th><th>seen</th></tr>
+  </thead>
+  <tbody>
+      <tr><td>the parser reads dates month first</td><td>374</td><td class="tags">parser ×351 · hint ×23</td><td>11</td><td>2026-04-01 → 2026-10-04</td></tr>
+      <tr><td>booking-v3 prints MM/DD/YYYY under the date field</td><td>33</td><td class="tags">hint ×18 · parser ×15</td><td>3</td><td>2026-04-17 → 2026-09-22</td></tr>
+      <tr><td>dates arrive one day off</td><td>5</td><td class="tags">parser ×5</td><td>5</td><td>2026-04-02 → 2026-10-04</td></tr>
+  </tbody>
+</table>
+
+<h2>The three problems</h2>
+
+<ol>
+<li><strong>The parser reads dates month first.</strong> Every tenant on file writes the day first, so their dates
+come out flipped. This is the bug #4471 was opened for. Ticket:
+<a href="https://github.com/Wojciech12131/mega-dev-s01e03/issues/1">issue 1</a>.</li>
+<li><strong>The booking-v3 form tells day-first tenants to type MM/DD/YYYY.</strong> People do what the hint says,
+and the form reads it their way. The fix is the hint text, not the parser. Ticket:
+<a href="https://github.com/Wojciech12131/mega-dev-s01e03/issues/2">issue 2</a>.</li>
+<li><strong>Dates arrive one day off.</strong> The desk already marks these in <code>desk-notes.json</code> as a one-day move.
+The month is right, so this is not a flip: the texts point at time zones or DST (Lisbon and Toronto
+got different days for one meeting; "every booking in June"). Ticket:
+<a href="https://github.com/Wojciech12131/mega-dev-s01e03/issues/3">issue 3</a>.</li>
+</ol>
+
+<h2>Why they were merged</h2>
+
+<p><a href="/kb/decisions/0001-dedupe-by-subject">Decision 0001</a> merges on subject alone, and most subject
+lines in the export cover more than one problem. Intake's tag is a guess from the reporter's browser: the "tagged as"
+column shows it often disagrees with the cause. A new decision record should replace 0001; an accepted
+decision is never edited.</p>
+
+<h2>Not sure</h2>
+
+<p>A few reports carry no dates in their text. They stay with the parser, the closest fit, until someone
+reads them again.</p>
+
+<h2>Lessons</h2>
+
+<ul>
+<li>Merge by cause, not by subject. Count each cause on its own.</li>
+<li>The tenant (locale and booking form) tells the cause. The reporter's browser does not.</li>
+<li>A "known" ticket with one fix queued is a claim. Check it against the reports.</li>
+</ul>
+
+<p class="stamp">desk ref <b>DR-SKEX-HBXV</b></p>
+  </main>
+  <footer>Pages are written by people. Tables and charts are built from data at render time.</footer>
+</div>
+</body>
+</html>

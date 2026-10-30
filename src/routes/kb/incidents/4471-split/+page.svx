@@ -1,0 +1,59 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: Wojtek
+status: open
+reviewed: 2026-10-30
+signature: v1.eyJzdWIiOiI2MjkwIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMzODYxMTYsImV4cCI6MTc5MzQ3MjUxNn0.HLixqUbYXttr774ll2RwmOVweULAGnePnn4A583GUPo
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+The [#4471 page](/kb/incidents/4471) says one issue and one fix. The reports say otherwise. We read
+every unique report in the export (the export pages overlap, so a report can arrive twice) and sorted
+each one by its cause, using the tenant's locale and booking form, never the subject line.
+
+<Callout kind="warn">
+#4471 holds three problems. The queued fix covers the first one only.
+</Callout>
+
+## What is inside
+
+<ProblemTable ticket={4471} />
+
+## The three problems
+
+1. **The parser reads dates month first.** Every tenant on file writes the day first, so their dates
+   come out flipped. This is the bug #4471 was opened for. Ticket:
+   [issue 1](https://github.com/Wojciech12131/mega-dev-s01e03/issues/1).
+2. **The booking-v3 form tells day-first tenants to type MM/DD/YYYY.** People do what the hint says,
+   and the form reads it their way. The fix is the hint text, not the parser. Ticket:
+   [issue 2](https://github.com/Wojciech12131/mega-dev-s01e03/issues/2).
+3. **Dates arrive one day off.** The desk already marks these in `desk-notes.json` as a one-day move.
+   The month is right, so this is not a flip: the texts point at time zones or DST (Lisbon and Toronto
+   got different days for one meeting; "every booking in June"). Ticket:
+   [issue 3](https://github.com/Wojciech12131/mega-dev-s01e03/issues/3).
+
+## Why they were merged
+
+[Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges on subject alone, and most subject
+lines in the export cover more than one problem. Intake's tag is a guess from the reporter's browser: the "tagged as"
+column shows it often disagrees with the cause. A new decision record should replace 0001; an accepted
+decision is never edited.
+
+## Not sure
+
+A few reports carry no dates in their text. They stay with the parser, the closest fit, until someone
+reads them again.
+
+## Lessons
+
+- Merge by cause, not by subject. Count each cause on its own.
+- The tenant (locale and booking form) tells the cause. The reporter's browser does not.
+- A "known" ticket with one fix queued is a claim. Check it against the reports.
+
+<RenderStamp {signature} />
