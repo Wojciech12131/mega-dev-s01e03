@@ -1,6 +1,6 @@
 ---
 layout: runbook
-title: '#4471 · three problems, not one'
+title: '#4471 · two problems, not one'
 owner: Wojtek
 status: open
 reviewed: 2026-10-30
@@ -18,14 +18,14 @@ every unique report in the export (the export pages overlap, so a report can arr
 each one by its cause, using the tenant's locale and booking form, never the subject line.
 
 <Callout kind="warn">
-#4471 holds three problems. The queued fix covers the first one only.
+#4471 holds two problems. The queued fix covers the first one only.
 </Callout>
 
 ## What is inside
 
 <ProblemTable ticket={4471} />
 
-## The three problems
+## The two problems
 
 1. **The parser reads dates month first.** Every tenant on file writes the day first, so their dates
    come out flipped. This is the bug #4471 was opened for. Ticket:
@@ -33,10 +33,9 @@ each one by its cause, using the tenant's locale and booking form, never the sub
 2. **The booking-v3 form tells day-first tenants to type MM/DD/YYYY.** People do what the hint says,
    and the form reads it their way. The fix is the hint text, not the parser. Ticket:
    [issue 2](https://github.com/Wojciech12131/mega-dev-s01e03/issues/2).
-3. **Dates arrive one day off.** The desk already marks these in `desk-notes.json` as a one-day move.
-   The month is right, so this is not a flip: the texts point at time zones or DST (Lisbon and Toronto
-   got different days for one meeting; "every booking in June"). Ticket:
-   [issue 3](https://github.com/Wojciech12131/mega-dev-s01e03/issues/3).
+
+Some reports describe a one-day move, not a flip. The desk files them by tenant, under the problem
+above, and the table footnotes them. We count them there too.
 
 ## Why they were merged
 
