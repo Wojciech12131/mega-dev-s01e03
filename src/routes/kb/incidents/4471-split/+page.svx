@@ -2,7 +2,7 @@
 layout: runbook
 title: '#4471 · two problems, not one'
 owner: Wojtek
-status: open
+status: closed
 reviewed: 2026-10-30
 signature: v1.eyJzdWIiOiI2MjkwIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMzODYxMTYsImV4cCI6MTc5MzQ3MjUxNn0.HLixqUbYXttr774ll2RwmOVweULAGnePnn4A583GUPo
 ---
@@ -18,7 +18,7 @@ every unique report in the export (the export pages overlap, so a report can arr
 each one by its cause, using the tenant's locale and booking form, never the subject line.
 
 <Callout kind="warn">
-#4471 holds two problems. The queued fix covers the first one only.
+#4471 held two problems. Engineering closed it on 5 October: the parser is fixed, the form hint will not be.
 </Callout>
 
 ## What is inside
@@ -30,9 +30,11 @@ each one by its cause, using the tenant's locale and booking form, never the sub
 1. **The parser reads dates month first.** Every tenant on file writes the day first, so their dates
    come out flipped. This is the bug #4471 was opened for. Ticket:
    [issue 1](https://github.com/Wojciech12131/mega-dev-s01e03/issues/1).
+   **Fixed:** `fix(dates): parse dd/mm for eu locales`.
 2. **The booking-v3 form tells day-first tenants to type MM/DD/YYYY.** People do what the hint says,
    and the form reads it their way. The fix is the hint text, not the parser. Ticket:
    [issue 2](https://github.com/Wojciech12131/mega-dev-s01e03/issues/2).
+   **Won't fix:** the booking-v3 form is retired.
 
 Some reports describe a one-day move, not a flip. The desk files them by tenant, under the problem
 above, and the table footnotes them. We count them there too.
@@ -53,6 +55,6 @@ reads them again.
 
 - Merge by cause, not by subject. Count each cause on its own.
 - The tenant (locale and booking form) tells the cause. The reporter's browser does not.
-- A "known" ticket with one fix queued is a claim. Check it against the reports.
+- A "known" ticket with one fix queued is a claim. Check it against the reports: it held two problems, and only one got a fix.
 
 <RenderStamp {signature} />
